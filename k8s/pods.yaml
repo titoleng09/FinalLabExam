@@ -1,0 +1,40 @@
+# POD 1 : API Gateway + Registration (2 containers in one pod)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gateway-registration-pod
+  labels:
+    app: gateway-registration
+spec:
+  containers:
+    - name: api-gateway
+      image: api-gateway:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 5005
+      env:
+        - name: REG_SERVICE_URL
+          value: "http://localhost:5003"
+        - name: LOGIN_SERVICE_URL
+          value: "http://login-service:5004"
+
+    - name: registration
+      image: registration:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 5003
+---
+# POD 2 : Login microservice
+apiVersion: v1
+kind: Pod
+metadata:
+  name: login-pod
+  labels:
+    app: login
+spec:
+  containers:
+    - name: login
+      image: login:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 5004
